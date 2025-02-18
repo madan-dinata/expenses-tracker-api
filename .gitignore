@@ -1,0 +1,21 @@
+# Node modules
+/node_modules/
+
+# Logs and temporary files
+*.log
+
+# Coverage reports (if using test coverage tools)
+/coverage/
+
+# Build and dist output (compiled files, bundlers)
+/build/
+/dist/
+
+# macOS system files (e.g., DS_Store)
+.DS_Store
+
+# Environment variable files (sensitive information)
+.env
+
+# If you're using yarn, you can also ignore yarn.lock
+/yarn.lock
