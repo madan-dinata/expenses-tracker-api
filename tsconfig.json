@@ -32,6 +32,7 @@
     // "paths": {},                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
     "baseUrl": "./",
     "paths": {
+      "@db/*": ["src/db/*"],
       "@controllers/*": ["src/controllers/*"],
       "@helpers/*": ["src/helpers/*"],
       "@middlewares/*": ["src/middlewares/*"],
