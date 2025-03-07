@@ -1,10 +1,16 @@
 import { Router } from 'express'
 
-import { getUsers, signup } from '@controllers/userController'
+import { deleteMe, getMe, getUsers, logout, refreshAccessToken, signin, signup } from '@controllers/userController'
+import { authenticateUser } from '@middlewares/auth'
 
 const userRouter = Router()
 
-userRouter.get('/users', getUsers)
+userRouter.get('/me', authenticateUser, getMe)
+userRouter.delete('/me', authenticateUser, deleteMe)
+userRouter.get('/users', authenticateUser, getUsers)
 userRouter.post('/signup', signup)
+userRouter.post('/signin', signin)
+userRouter.post('/refresh', authenticateUser, refreshAccessToken)
+userRouter.delete('/logout', authenticateUser, logout)
 
 export default userRouter

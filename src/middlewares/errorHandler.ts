@@ -1,7 +1,9 @@
-import { AppError } from '@utils/appError'
-import { warnLogger } from '@utils/logger'
 import { Request, Response, NextFunction } from 'express'
 import { ZodError } from 'zod'
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken'
+
+import { AppError } from '@utils/appError'
+import { errorLogger, warnLogger } from '@utils/logger'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction): void => {
@@ -30,6 +32,28 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
     return
   }
 
+  if (err instanceof TokenExpiredError) {
+    const errors = {
+      code: 'UNAUTHORIZED',
+      message: 'Unauthorized: Access Token expired'
+    }
+
+    warnLogger.warn({ req: { method: req.method, url: req.originalUrl }, errors })
+    res.status(401).json({ errors })
+    return
+  }
+
+  if (err instanceof JsonWebTokenError) {
+    const errors = {
+      code: 'UNAUTHORIZED',
+      message: 'Unauthorized: Invalid token signature'
+    }
+
+    warnLogger.warn({ req: { method: req.method, url: req.originalUrl }, errors })
+    res.status(401).json({ errors })
+    return
+  }
+
   if (err instanceof AppError) {
     const errors = {
       code: err.name,
@@ -51,6 +75,12 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
 
   if (err.details) {
     errors.details = err.details
+  }
+
+  if (statusCode >= 500) {
+    errorLogger.error({ req: { method: req.method, url: req.originalUrl }, errors })
+  } else {
+    warnLogger.warn({ req: { method: req.method, url: req.originalUrl }, errors })
   }
 
   res.status(statusCode).send({ errors })
